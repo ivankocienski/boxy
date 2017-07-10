@@ -3,6 +3,7 @@ import pygame as pg
 from OpenGL.GL import *
 
 from .box import Box
+from .map import Map
 
 class Cursor:
     def __init__(self, spacing, app):
@@ -49,17 +50,19 @@ class MainWindow:
 
     def __init__(self, app):
         self.app = app
-        self.box = Box()
+        self.map = Map()
         self.cursor = Cursor(20, app)
-        self.in_plot = False
+
+        self.plot_box = None
+        self.select_box = None
 
         print("Press Q to quit")
-        print("Move mouse about. Press SPACE-BAR to start / end plotting of box")
+        #print("Move mouse about. Press SPACE-BAR to start / end plotting of box")
 
     def mouse_move(self, xp, yp):
         self.cursor.move(xp, yp)
-        if self.in_plot:
-            self.box.set_size_from(self.cursor.step_x, self.cursor.step_y)
+        if self.plot_box:
+            self.plot_box.set_size_from(self.cursor.step_x, self.cursor.step_y)
             self.app.repaint()
 
         #self.app.repaint()
@@ -67,7 +70,12 @@ class MainWindow:
 
     def mouse_down(self, btn): 
         #print("mouse_down=%s" % btn)
-        pass
+        box = self.map.box_at_point(self.cursor.step_x, self.cursor.step_y)
+        if box:
+            self.select_box = box
+            self.map.clear_highlight()
+            box.highlight = True
+            self.app.repaint()
 
 
     def mouse_up(self, btn): 
@@ -81,22 +89,36 @@ class MainWindow:
             return
 
         if key == pg.K_SPACE:
-            if self.in_plot:
-                self.in_plot = False
-                self.box.set_size_from(self.cursor.step_x, self.cursor.step_y)
+            if self.plot_box:
+                self.plot_box.set_size_from(self.cursor.step_x, self.cursor.step_y)
+
+                if self.plot_box.is_valid():
+                    self.map.append_box(self.plot_box)
+                    self.plot_box = None
+
                 self.app.repaint()
 
             else:
-                self.in_plot = True 
-                self.box.set_pos_from(self.cursor.step_x, self.cursor.step_y)
+                self.plot_box = Box()
+                self.plot_box.set_pos_from(self.cursor.step_x, self.cursor.step_y)
                 self.app.repaint()
+
+            return
+
+        if key == pg.K_BACKSPACE and self.select_box:
+            self.map.remove_box(self.select_box)
+            self.select_box = None
+            self.app.repaint()
+            
                 
-            pass
 
 
     def draw(self):
+        self.map.draw()
 
-        self.box.draw()
+        if self.plot_box:
+            self.plot_box.draw()
+
         self.cursor.draw()
 
 

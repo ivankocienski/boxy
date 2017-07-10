@@ -21,6 +21,21 @@ class Box:
         if self.width  < 0: self.width  = 0
         if self.height < 0: self.height = 0
 
+    def is_valid(self):
+        return self.width > 0 and self.height > 0
+
+    def contains_point(self, px, py):
+        if px < self.xpos: return False
+        if py < self.ypos: return False
+
+        px -= self.xpos
+        if px > self.width: return False
+
+        py -= self.ypos
+        if py > self.height: return False
+
+        return True
+
     def set_highlight(self, hl=True):
         self.highlight = hl
 
