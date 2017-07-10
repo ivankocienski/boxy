@@ -40,12 +40,14 @@ class App:
         pg.init()
         pg.font.init()
 
+        self.run_loop = True
         self.loader = Loader(os.getcwd() + "/data", False)
 
         self.screen = pg.display.set_mode([800, 600], HWSURFACE | OPENGL | DOUBLEBUF, 24)
         glViewport(0, 0, 800, 600)
 
         pg.display.set_caption('Map edit')
+
         self.setup2d()
         self.repaint()
 
@@ -67,14 +69,18 @@ class App:
     def repaint(self):
         self.do_repaint = True
 
+    def stop_loop(self):
+        self.run_loop = False
+
     def main(self):
 
         win = MainWindow(self)
 
-        while(True):
+        while(self.run_loop):
             pg.time.delay(10)
 
             for event in pg.event.get():
+
                 if event.type == QUIT:
                     return 
 
@@ -82,10 +88,10 @@ class App:
                     win.mouse_move(event.pos[0], event.pos[1])
 
                 elif event.type == MOUSEBUTTONDOWN:
-                    win.mouse_down()
+                    win.mouse_down(event.button)
 
                 elif event.type == MOUSEBUTTONUP:
-                    win.mouse_up()
+                    win.mouse_up(event.button)
 
                 elif event.type == KEYDOWN:
                     win.key_down(event.key)
