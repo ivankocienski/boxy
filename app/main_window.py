@@ -56,6 +56,12 @@ class MainWindow:
         self.plot_box = None
         self.select_box = None
 
+        try:
+            self.map.load('map.txt')
+
+        except FileNotFoundError:
+            print("map.txt not found, using blank")
+
         print("Press Q to quit")
         #print("Move mouse about. Press SPACE-BAR to start / end plotting of box")
 
@@ -109,6 +115,12 @@ class MainWindow:
             self.map.remove_box(self.select_box)
             self.select_box = None
             self.app.repaint()
+            return
+
+        if key == pg.K_F2:
+            self.map.save('map.txt')
+            print("map saved to map.txt")
+            return
             
                 
 

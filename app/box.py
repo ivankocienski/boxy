@@ -24,6 +24,21 @@ class Box:
     def is_valid(self):
         return self.width > 0 and self.height > 0
 
+    def clear_walls(self):
+        self.walls = [] 
+
+    def link_walls(self, map_):
+        pass
+
+    def to_save_string(self):
+        return "%d %d %d %d" % (self.xpos, self.ypos, self.width, self.height)
+
+    def from_save_strings(self, px, py, w, h):
+        self.xpos   = px
+        self.ypos   = py
+        self.width  = w
+        self.height = h
+
     def contains_point(self, px, py):
         if px < self.xpos: return False
         if py < self.ypos: return False
