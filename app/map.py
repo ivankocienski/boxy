@@ -7,6 +7,9 @@ class Map:
     def __init__(self):
         self.boxes = []
 
+    def clear(self):
+        self.boxes = []
+
     def box_at_point(self, px, py):
         for b in self.boxes: 
             if b.contains_point(px, py):
@@ -31,14 +34,25 @@ class Map:
                 loaded_boxes.append(b)
 
         self.boxes = loaded_boxes
+        self.link_boxes()
 
+    
+    def find_boxes_touching(self, orientation, pos, min_, max_, not_box):
+        other_boxes = []
+        for b in self.boxes:
+            if b == not_box: continue
+
+            if b.is_touching(orientation, pos, min_, max_):
+                other_boxes.append(b)
+
+        return other_boxes
 
     def link_boxes(self):
-        for b in self.boxes: 
-            b.clear_walls()
+        #for b in self.boxes: 
+        #    b.clear_walls()
 
         for b in self.boxes: 
-            b.link(self)
+            b.link_walls(self)
 
 
     def clear_highlight(self):

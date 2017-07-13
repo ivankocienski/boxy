@@ -122,6 +122,13 @@ class MainWindow:
             print("map saved to map.txt")
             return
             
+        if key == pg.K_F4:
+            self.map.clear()
+            print("map cleared")
+            self.select_box = None
+            self.plot_box = None
+            self.app.repaint()
+            return
                 
 
 
