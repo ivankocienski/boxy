@@ -9,23 +9,39 @@ class Player:
         self.xinc = 0
         self.yinc = 0
         self.angle = 0
+        self.box = None
 
-    def move(self, dir_keys):
+    def find_box_in(self, map_):
+        self.box = map_.box_at_point(self.xpos, self.ypos)
+
+    def move(self, map_, dir_keys):
 
         if dir_keys[2]: self.angle -= 0.2
         if dir_keys[3]: self.angle += 0.2
 
+        moving = False
+
         if dir_keys[0]:
             self.xpos += self.xinc
             self.ypos += self.yinc
+            moving = True
 
         if dir_keys[1]:
             self.xpos -= self.xinc
             self.ypos -= self.yinc
+            moving = True
 
         self.xinc = cos(self.angle)
         self.yinc = sin(self.angle)
-        pass
+
+        if moving:
+            if self.box:
+                if not self.box.contains_point(self.xpos, self.ypos):
+                    self.box = map_.box_at_point(self.xpos, self.ypos)
+
+            else: 
+                self.box = map_.box_at_point(self.xpos, self.ypos)
+
 
     def draw(self): 
 
@@ -52,3 +68,6 @@ class Player:
         glVertex2d(self.xpos + 12 * self.xinc, self.ypos + 12 * self.yinc)
 
         glEnd(); 
+
+        if self.box:
+            self.box.draw_player_bit()

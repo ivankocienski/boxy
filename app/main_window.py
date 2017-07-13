@@ -96,7 +96,7 @@ class MainWindow:
         return (self.select_box is None) and (self.plot_box is None)
 
     def tick(self):
-        self.player.move(self.dir_keys)
+        self.player.move(self.map, self.dir_keys)
 
     def key_down(self, key):
         #print("key=%s" % key)

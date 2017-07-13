@@ -271,3 +271,18 @@ class Box:
       
         glEnd()
 
+    def draw_player_bit(self):
+        x1 = self.xpos+1
+        y1 = self.ypos+1
+        x2 = x1 + self.width-2
+        y2 = y1 + self.height-2
+  
+        glColor3f(0.2, 0.2, 0.2)
+        glBegin(GL_LINE_LOOP)
+  
+        glVertex2f( x1, y1 )
+        glVertex2f( x2, y1 )
+        glVertex2f( x2, y2 )
+        glVertex2f( x1, y2 )
+  
+        glEnd()
