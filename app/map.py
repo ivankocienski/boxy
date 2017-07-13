@@ -70,4 +70,5 @@ class Map:
         for b in self.boxes: 
             b.draw()
 
+
     

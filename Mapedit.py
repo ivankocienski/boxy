@@ -96,7 +96,12 @@ class App:
                 elif event.type == KEYDOWN:
                     win.key_down(event.key)
 
-            if self.do_repaint:
+                elif event.type == KEYUP:
+                    win.key_up(event.key)
+
+            win.tick()
+
+            if True: #self.do_repaint:
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
                 self.do_repaint = False

@@ -4,6 +4,8 @@ from OpenGL.GL import *
 
 from .box import Box
 from .map import Map
+from .player import Player
+
 
 class Cursor:
     def __init__(self, spacing, app):
@@ -52,6 +54,8 @@ class MainWindow:
         self.app = app
         self.map = Map()
         self.cursor = Cursor(20, app)
+        self.player = Player(400, 300)
+        self.dir_keys = [False, False, False, False]
 
         self.plot_box = None
         self.select_box = None
@@ -88,6 +92,12 @@ class MainWindow:
         #print("mouse_up=%s" % btn)
         pass
 
+    def is_idle(self):
+        return (self.select_box is None) and (self.plot_box is None)
+
+    def tick(self):
+        self.player.move(self.dir_keys)
+
     def key_down(self, key):
         #print("key=%s" % key)
         if key == pg.K_q: 
@@ -111,6 +121,22 @@ class MainWindow:
 
             return
 
+        if key == pg.K_UP:
+            self.dir_keys[0] = True
+            return
+
+        if key == pg.K_DOWN:
+            self.dir_keys[1] = True
+            return
+
+        if key == pg.K_LEFT:
+            self.dir_keys[2] = True
+            return
+
+        if key == pg.K_RIGHT:
+            self.dir_keys[3] = True
+            return
+
         if key == pg.K_BACKSPACE and self.select_box:
             self.map.remove_box(self.select_box)
             self.select_box = None
@@ -130,6 +156,23 @@ class MainWindow:
             self.app.repaint()
             return
                 
+    def key_up(self, key):
+
+        if key == pg.K_UP:
+            self.dir_keys[0] = False
+            return
+
+        if key == pg.K_DOWN:
+            self.dir_keys[1] = False
+            return
+
+        if key == pg.K_LEFT:
+            self.dir_keys[2] = False
+            return
+
+        if key == pg.K_RIGHT:
+            self.dir_keys[3] = False
+            return
 
 
     def draw(self):
@@ -138,7 +181,8 @@ class MainWindow:
         if self.plot_box:
             self.plot_box.draw()
 
-        self.cursor.draw()
+        self.cursor.draw() 
+        self.player.draw()
 
 
 
