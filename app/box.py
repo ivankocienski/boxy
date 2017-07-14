@@ -44,6 +44,22 @@ class Line:
         glVertex2f( self.x1, self.y1 )
         glVertex2f( self.x2, self.y2 )
 
+    def draw3d(self):
+        if self.x1 == self.x2:
+            glColor3f(0.8, 0.8, 0.8)
+        else:
+            glColor3f(0.7, 0.7, 0.7)
+
+        glBegin(GL_TRIANGLE_FAN);
+
+        glVertex3f(self.x1, -20, self.y1);
+        glVertex3f(self.x1,  20, self.y1);
+        glVertex3f(self.x2,  20, self.y2);
+        glVertex3f(self.x2, -20, self.y2); 
+
+        glEnd();
+        
+
 
 class Box:
     def __init__(self):
@@ -206,6 +222,8 @@ class Box:
 
     def link_walls(self, map_):
 
+        self.wall_lines = []
+
         # north
         other_boxes = map_.find_boxes_touching(
                 OR_HORZ,
@@ -331,7 +349,8 @@ class Box:
         x2 = x1 + self.width
         y2 = y1 + self.height
 
-        glColor3f(1, 1, 1)
+        # floor
+        glColor3f(0.9, 0.9, 0.9)
 
         glBegin(GL_TRIANGLE_FAN);
 
@@ -342,6 +361,20 @@ class Box:
 
         glEnd();
 
+        # cieling
+        glColor3f(1, 1, 1)
+
+        glBegin(GL_TRIANGLE_FAN);
+
+        glVertex3f(x1, 20, y1);
+        glVertex3f(x2, 20, y1);
+        glVertex3f(x2, 20, y2);
+        glVertex3f(x1, 20, y2); 
+
+        glEnd();
+
+        for l in self.wall_lines:
+            l.draw3d()
 
     def draw_player_bit(self):
         x1 = self.xpos+1

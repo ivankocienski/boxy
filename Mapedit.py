@@ -63,6 +63,7 @@ class App:
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+        glDisable(GL_DEPTH_TEST)
 
     def setup3d(self):
         glMatrixMode(GL_PROJECTION)
@@ -72,6 +73,7 @@ class App:
 	
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+        glEnable(GL_DEPTH_TEST)
 
     def repaint(self):
         self.do_repaint = True
