@@ -1,8 +1,49 @@
 
 from OpenGL.GL import *
+from math import sqrt
 
 OR_HORZ = 1
 OR_VERT = 2
+
+class Line:
+
+    def __init__(self, x1, y1, x2, y2):
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+
+    def nearest_distance_to(self, px, py):
+        
+        # this is a bit hacky, but works because
+        #   walls can only be in one of two
+        #   orientations
+
+        nx = px
+        ny = py
+
+        # horizontal
+        if self.x1 == self.x2:
+            nx = self.x1
+            ny = py
+            if ny < self.y1: ny = self.y1
+            if ny > self.y2: ny = self.y2
+
+        # vertical
+        else:
+            ny = self.y1
+            nx = px
+            if nx < self.x1: nx = self.x1
+            if nx > self.x2: nx = self.x2 
+
+        dx = px - nx
+        dy = py - ny
+        return (sqrt(dx*dx + dy*dy), nx, ny)
+
+    def draw(self): 
+        glVertex2f( self.x1, self.y1 )
+        glVertex2f( self.x2, self.y2 )
+
 
 class Box:
     def __init__(self):
@@ -59,7 +100,7 @@ class Box:
 
     def link_horz(self, other_boxes, ypos):
         if len(other_boxes) == 0:
-            self.wall_lines.append((self.xpos, ypos, self.xpos + self.width, ypos))
+            self.wall_lines.append(Line(self.xpos, ypos, self.xpos + self.width, ypos))
             return
 
         out_lines = [(self.xpos, self.width)]
@@ -108,11 +149,11 @@ class Box:
 
         for line in out_lines:
             l_pos, l_len = line
-            self.wall_lines.append((l_pos, ypos, l_pos + l_len, ypos))
+            self.wall_lines.append(Line(l_pos, ypos, l_pos + l_len, ypos))
 
     def link_vert(self, other_boxes, xpos):
         if len(other_boxes) == 0:
-            self.wall_lines.append((xpos, self.ypos, xpos, self.ypos + self.height))
+            self.wall_lines.append(Line(xpos, self.ypos, xpos, self.ypos + self.height))
             return
 
         out_lines = [(self.ypos, self.height)]
@@ -161,7 +202,7 @@ class Box:
 
         for line in out_lines:
             l_pos, l_len = line
-            self.wall_lines.append((xpos, l_pos, xpos, l_pos + l_len))
+            self.wall_lines.append(Line(xpos, l_pos, xpos, l_pos + l_len))
 
     def link_walls(self, map_):
 
@@ -210,6 +251,20 @@ class Box:
 
     def to_save_string(self):
         return "%d %d %d %d" % (self.xpos, self.ypos, self.width, self.height)
+
+    def find_closest_point(self, px, py):
+        out_dist = 99999
+        out_hx = 0
+        out_hy = 0
+
+        for wl in self.wall_lines:
+            wd, wx, wy = wl.nearest_distance_to(px, py)
+            if wd >= out_dist: continue
+            out_dist = wd
+            out_hx = wx
+            out_hy = wy
+
+        return (out_dist, out_hx, out_hy)
 
     def from_save_strings(self, px, py, w, h):
         self.xpos   = px
@@ -262,13 +317,11 @@ class Box:
         glColor3f(1, 1, 1)
         glBegin(GL_LINES)
 
-        for wl in self.wall_lines:
+        #print(self.wall_lines)
 
-            x1, y1, x2, y2 = wl
-      
-            glVertex2f( x1, y1 )
-            glVertex2f( x2, y2 )
-      
+        for l in self.wall_lines:
+            l.draw()
+
         glEnd()
 
     def draw_player_bit(self):

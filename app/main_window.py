@@ -143,12 +143,12 @@ class MainWindow:
             self.app.repaint()
             return
 
-        if key == pg.K_F2:
+        if key == pg.K_F2 and self.is_idle():
             self.map.save('map.txt')
             print("map saved to map.txt")
             return
             
-        if key == pg.K_F4:
+        if key == pg.K_F4 and self.is_idle():
             self.map.clear()
             print("map cleared")
             self.select_box = None
