@@ -36,7 +36,7 @@ class Map:
                 if parts[0] == 'box':
                     int_parts = [int(p) for p in parts[1:]]
                     b = Box()
-                    b.from_save_strings(int_parts[0], int_parts[1], int_parts[2], int_parts[3])
+                    b.from_save_strings(int_parts[0], int_parts[1], int_parts[2], int_parts[3], int_parts[4])
                     loaded_boxes.append(b)
                     continue
 

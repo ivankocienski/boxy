@@ -284,7 +284,7 @@ class Box:
         self.link_vert(other_boxes, self.xpos)
 
     def to_save_string(self):
-        return "%d %d %d %d" % (self.xpos, self.ypos, self.width, self.height)
+        return "%d %d %d %d %d" % (self.xpos, self.ypos, self.width, self.height, self.color_num)
 
     def find_closest_point(self, px, py):
         out_dist = 99999
@@ -300,11 +300,13 @@ class Box:
 
         return (out_dist, out_hx, out_hy)
 
-    def from_save_strings(self, px, py, w, h):
+    def from_save_strings(self, px, py, w, h, c):
         self.xpos   = px
         self.ypos   = py
         self.width  = w
         self.height = h
+        self.color_num = c
+        self.color = COLORS[self.color_num]
 
     def contains_point(self, px, py):
         if px < self.xpos: return False
