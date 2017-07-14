@@ -103,4 +103,10 @@ class Map:
         glEnd()
 
 
+    def draw3d(self):
+        for b in self.boxes: 
+            b.draw3d()
+
+
+
     

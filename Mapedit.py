@@ -4,6 +4,7 @@ import random
 import pygame as pg
 from pygame.locals import *
 from OpenGL.GL import *
+from OpenGL.GLU import *
 
 from app.main_window import MainWindow
 
@@ -64,7 +65,13 @@ class App:
         glLoadIdentity()
 
     def setup3d(self):
-        pass
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+
+        gluPerspective(60.0, 800.0 / 600.0, 1.0, 1000.0)
+	
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
 
     def repaint(self):
         self.do_repaint = True
@@ -103,6 +110,7 @@ class App:
 
             if True: #self.do_repaint:
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+                glLoadIdentity()
 
                 self.do_repaint = False
                 win.draw()

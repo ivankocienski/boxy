@@ -6,6 +6,6 @@ todo:
 * move player
 * home key sets map player start pos
 * set player pos from map start pos
-- 2D/3D switch
+* 2D/3D switch
 - set color of box (in 2D)
 

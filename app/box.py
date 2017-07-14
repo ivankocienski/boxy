@@ -324,6 +324,25 @@ class Box:
 
         glEnd()
 
+    def draw3d(self):
+
+        x1 = self.xpos
+        y1 = self.ypos
+        x2 = x1 + self.width
+        y2 = y1 + self.height
+
+        glColor3f(1, 1, 1)
+
+        glBegin(GL_TRIANGLE_FAN);
+
+        glVertex3f(x1, -20, y1);
+        glVertex3f(x2, -20, y1);
+        glVertex3f(x2, -20, y2);
+        glVertex3f(x1, -20, y2); 
+
+        glEnd();
+
+
     def draw_player_bit(self):
         x1 = self.xpos+1
         y1 = self.ypos+1

@@ -1,5 +1,6 @@
 
 from OpenGL.GL import *
+from OpenGL.GLU import *
 from math import pi, sin, cos
 
 class Player:
@@ -17,6 +18,23 @@ class Player:
 
     def find_box_in(self, map_):
         self.box = map_.box_at_point(self.xpos, self.ypos)
+
+    def look(self):
+        gluLookAt(
+            #position
+            self.xpos, 
+            0.5, 
+            self.ypos,
+
+            # direction
+            self.xpos + self.xinc, 
+            0.5, 
+            self.ypos + self.yinc, 
+
+            # up
+            0.0, 
+            1.0, 
+            0.0)
 
     def move(self, map_, dir_keys):
 
