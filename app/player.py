@@ -90,6 +90,10 @@ class Player:
                 try_move(self.box, new_xpos, new_ypos)
 
 
+    def bump_box_color(self):
+        if self.box:
+            self.box.next_color()
+
     def draw(self): 
 
         glColor3f(1, 1, 1)

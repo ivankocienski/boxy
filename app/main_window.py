@@ -167,6 +167,10 @@ class MainWindow:
             else:
                 self.app.setup2d()
 
+        if key == pg.K_c:
+            self.player.bump_box_color()
+            return
+
         if key == pg.K_UP:
             self.dir_keys[0] = True
             return

@@ -5,6 +5,15 @@ from math import sqrt
 OR_HORZ = 1
 OR_VERT = 2
 
+COLORS = [
+        (1, 1, 1), # white
+        (0.75, 0.75, 0.75), # grey
+        (1, 0.2, 0.2), # red
+        (1, 0.8, 0.0), # yellow
+        (0.2, 1, 0.3), # green
+        (0.2, 0.1, 1)] # blu
+
+
 class Line:
 
     def __init__(self, x1, y1, x2, y2):
@@ -44,11 +53,12 @@ class Line:
         glVertex2f( self.x1, self.y1 )
         glVertex2f( self.x2, self.y2 )
 
-    def draw3d(self):
-        if self.x1 == self.x2:
-            glColor3f(0.8, 0.8, 0.8)
-        else:
-            glColor3f(0.7, 0.7, 0.7)
+    def draw3d(self, color):
+        mult = 0.7
+
+        if self.x1 == self.x2: mult = 0.8
+
+        glColor3f(color[0] * mult, color[1] * mult, color[2] * mult)
 
         glBegin(GL_TRIANGLE_FAN);
 
@@ -69,6 +79,8 @@ class Box:
         self.height = 100
         self.highlight = False 
         self.wall_lines = []
+        self.color = COLORS[0]
+        self.color_num = 0
 
     def set_pos_from(self, x, y):
         self.xpos = x
@@ -81,6 +93,10 @@ class Box:
         self.height = y - self.ypos
         if self.width  < 0: self.width  = 0
         if self.height < 0: self.height = 0
+
+    def next_color(self):
+        self.color_num = (self.color_num + 1) % len(COLORS)
+        self.color = COLORS[self.color_num]
 
     def is_valid(self):
         return self.width > 0 and self.height > 0
@@ -350,7 +366,7 @@ class Box:
         y2 = y1 + self.height
 
         # floor
-        glColor3f(0.9, 0.9, 0.9)
+        glColor3f(self.color[0] * 0.9, self.color[1] * 0.9, self.color[2] * 0.9)
 
         glBegin(GL_TRIANGLE_FAN);
 
@@ -362,7 +378,7 @@ class Box:
         glEnd();
 
         # cieling
-        glColor3f(1, 1, 1)
+        glColor3f(self.color[0] * 1, self.color[1] * 1, self.color[2] * 1)
 
         glBegin(GL_TRIANGLE_FAN);
 
@@ -374,7 +390,7 @@ class Box:
         glEnd();
 
         for l in self.wall_lines:
-            l.draw3d()
+            l.draw3d(self.color)
 
     def draw_player_bit(self):
         x1 = self.xpos+1
