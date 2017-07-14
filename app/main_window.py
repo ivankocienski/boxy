@@ -66,6 +66,10 @@ class MainWindow:
         except FileNotFoundError:
             print("map.txt not found, using blank")
 
+        self.player.set_pos(
+                self.map.player_start_xpos,
+                self.map.player_start_ypos)
+
         print("Press Q to quit")
         #print("Move mouse about. Press SPACE-BAR to start / end plotting of box")
 
@@ -80,12 +84,18 @@ class MainWindow:
 
     def mouse_down(self, btn): 
         #print("mouse_down=%s" % btn)
-        box = self.map.box_at_point(self.cursor.step_x, self.cursor.step_y)
-        if box:
-            self.select_box = box
-            self.map.clear_highlight()
-            box.highlight = True
-            self.app.repaint()
+        if btn == 1:
+            box = self.map.box_at_point(self.cursor.step_x, self.cursor.step_y)
+            if box:
+                self.select_box = box
+                self.map.clear_highlight()
+                box.highlight = True
+                self.app.repaint()
+
+        if btn == 2:
+            self.player.set_pos(
+                    self.cursor.step_x,
+                    self.cursor.step_y)
 
 
     def mouse_up(self, btn): 
@@ -111,6 +121,7 @@ class MainWindow:
                 if self.plot_box.is_valid():
                     self.map.append_box(self.plot_box)
                     self.plot_box = None
+                    self.map.link_boxes()
 
                 self.app.repaint()
 
@@ -141,6 +152,7 @@ class MainWindow:
             self.map.remove_box(self.select_box)
             self.select_box = None
             self.app.repaint()
+            self.map.link_boxes()
             return
 
         if key == pg.K_F2 and self.is_idle():
@@ -153,6 +165,11 @@ class MainWindow:
             print("map cleared")
             self.select_box = None
             self.plot_box = None
+            self.app.repaint()
+            return
+
+        if key == pg.K_HOME:
+            self.map.set_player_start(self.player.xpos, self.player.ypos)
             self.app.repaint()
             return
                 

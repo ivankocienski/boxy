@@ -11,6 +11,10 @@ class Player:
         self.angle = 0
         self.box = None
 
+    def set_pos(self, px, py):
+        self.xpos = px
+        self.ypos = py
+
     def find_box_in(self, map_):
         self.box = map_.box_at_point(self.xpos, self.ypos)
 
