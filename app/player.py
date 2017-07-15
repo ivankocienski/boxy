@@ -48,8 +48,8 @@ class Player:
                     self.xpos = to_x
                     self.ypos = to_y
 
-        if dir_keys[2]: self.angle -= 0.2
-        if dir_keys[3]: self.angle += 0.2
+        if dir_keys[2]: self.angle -= 0.1
+        if dir_keys[3]: self.angle += 0.1
 
         moving = False
         new_xpos = self.xpos

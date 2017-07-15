@@ -1,8 +1,10 @@
-# Spidee
+= Boxy
 
-Status: Work in progress
+A thing for drawing simple box like worlds
 
-A Clone of spider solitaire on Windows XP written in python using pygame.
+== Requirements
 
-(c) I.K. 2016
+- python >3
+- pygame
+- pyopengl
 
