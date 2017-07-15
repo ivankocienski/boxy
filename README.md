@@ -2,6 +2,9 @@
 
 A thing for drawing simple box like worlds
 
+![3D view](https://raw.githubusercontent.com/ivankocienski/boxy/master/support/screenshot-3d.png)
+![2D view](https://raw.githubusercontent.com/ivankocienski/boxy/master/support/screenshot-2d.png)
+
 ## Requirements
 
 - python >3
@@ -30,3 +33,7 @@ Press enter to switch to 3D mode
 - move about with the cursor keys
 - pressing C cycles the current room you are in to the next color
 
+
+## Copyright
+
+By Ivan Kocienski 2017
