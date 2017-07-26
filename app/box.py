@@ -72,7 +72,8 @@ class Line:
 
 
 class Box:
-    def __init__(self):
+    def __init__(self, parent=None):
+        self.parent = parent
         self.xpos = 0
         self.ypos = 0
         self.width = 100
@@ -81,6 +82,10 @@ class Box:
         self.wall_lines = []
         self.color = COLORS[0]
         self.color_num = 0
+        self.sub_boxes = []
+
+    def __str__(self):
+        return "<Box xpos=%d ypos=%d width=%d height=%d" % (self.xpos, self.ypos, self.width, self.height)
 
     def set_pos_from(self, x, y):
         self.xpos = x
@@ -89,8 +94,14 @@ class Box:
         self.height = 0
 
     def set_size_from(self, x, y):
+        if self.parent is not None:
+            if not self.parent.contains_point(x, y):
+                return
+
         self.width  = x - self.xpos
         self.height = y - self.ypos
+        print("  set size from %d %d %d %d %d %d" % (x, y, self.xpos, self.ypos, self.width, self.height))
+
         if self.width  < 0: self.width  = 0
         if self.height < 0: self.height = 0
 
@@ -239,47 +250,67 @@ class Box:
     def link_walls(self, map_):
 
         self.wall_lines = []
+        other_boxes = []
 
         # north
-        other_boxes = map_.find_boxes_touching(
-                OR_HORZ,
-                self.ypos, 
-                self.xpos,
-                self.xpos + self.width,
-                self)
+        if map_ is None:
+            other_boxes = []
+
+        else:
+            other_boxes = map_.find_boxes_touching(
+                    OR_HORZ,
+                    self.ypos, 
+                    self.xpos,
+                    self.xpos + self.width,
+                    self)
 
         self.link_horz(other_boxes, self.ypos)
         
+        other_boxes = []
 
         # east
-        other_boxes = map_.find_boxes_touching(
-                OR_VERT,
-                self.xpos + self.width,
-                self.ypos,
-                self.ypos + self.height,
-                self)
+        if map_ is None:
+            other_boxes = []
+
+        else: 
+            other_boxes = map_.find_boxes_touching(
+                    OR_VERT,
+                    self.xpos + self.width,
+                    self.ypos,
+                    self.ypos + self.height,
+                    self)
         
         self.link_vert(other_boxes, self.xpos + self.width)
 
+        other_boxes = []
 
         # south
-        other_boxes = map_.find_boxes_touching(
-                OR_HORZ, 
-                self.ypos + self.height, 
-                self.xpos, 
-                self.xpos + self.width, 
-                self)
+        if map_ is None:
+            other_boxes = []
+
+        else: 
+            other_boxes = map_.find_boxes_touching(
+                    OR_HORZ, 
+                    self.ypos + self.height, 
+                    self.xpos, 
+                    self.xpos + self.width, 
+                    self)
         
         self.link_horz(other_boxes, self.ypos + self.height)
         
+        other_boxes = []
 
         # west
-        other_boxes = map_.find_boxes_touching(
-                OR_VERT, 
-                self.xpos, 
-                self.ypos, 
-                self.ypos + self.height, 
-                self)
+        if map_ is None:
+            other_boxes = []
+
+        else: 
+            other_boxes = map_.find_boxes_touching(
+                    OR_VERT, 
+                    self.xpos, 
+                    self.ypos, 
+                    self.ypos + self.height, 
+                    self)
 
         self.link_vert(other_boxes, self.xpos)
 
@@ -320,6 +351,18 @@ class Box:
 
         return True
 
+    def start_plot_sub_box(self, px, py):
+        b = Box(self)
+        b.xpos = px
+        b.ypos = py
+
+        return b
+
+    def finish_plot_sub_box(self, box):
+        print("finish_plot_sub_box %s" % box)
+        box.link_walls(None)
+        self.sub_boxes.append(box)
+
     def set_highlight(self, hl=True):
         self.highlight = hl
 
@@ -353,11 +396,30 @@ class Box:
         glColor3f(1, 1, 1)
         glBegin(GL_LINES)
 
-        #print(self.wall_lines)
-
         for l in self.wall_lines:
             l.draw()
 
+        glEnd()
+
+        glColor3f(1, 1, 0)
+
+        for sb in self.sub_boxes:
+            sb.draw_partial_2d()
+
+
+    def draw_partial_2d(self):
+        x1 = self.xpos
+        y1 = self.ypos
+        x2 = x1 + self.width
+        y2 = y1 + self.height
+  
+        glBegin(GL_LINE_LOOP)
+  
+        glVertex2f( x1, y1 )
+        glVertex2f( x2, y1 )
+        glVertex2f( x2, y2 )
+        glVertex2f( x1, y2 )
+  
         glEnd()
 
     def draw3d(self):
@@ -393,6 +455,14 @@ class Box:
 
         for l in self.wall_lines:
             l.draw3d(self.color)
+
+        for sb in self.sub_boxes:
+            sb.draw_partial_3d(self.color)
+
+    def draw_partial_3d(self, color):
+        for l in self.wall_lines:
+            l.draw3d(color)
+
 
     def draw_player_bit(self):
         x1 = self.xpos+1

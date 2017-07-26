@@ -9,3 +9,5 @@ todo:
 * 2D/3D switch
 * set color of box (in 2D)
 
+- inside box
+- refactor: put in modes
