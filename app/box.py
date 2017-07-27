@@ -85,7 +85,7 @@ class Box:
         self.sub_boxes = []
 
     def __str__(self):
-        return "<Box xpos=%d ypos=%d width=%d height=%d" % (self.xpos, self.ypos, self.width, self.height)
+        return "<Box xpos=%d ypos=%d width=%d height=%d>" % (self.xpos, self.ypos, self.width, self.height)
 
     def set_pos_from(self, x, y):
         self.xpos = x
@@ -100,7 +100,7 @@ class Box:
 
         self.width  = x - self.xpos
         self.height = y - self.ypos
-        print("  set size from %d %d %d %d %d %d" % (x, y, self.xpos, self.ypos, self.width, self.height))
+        #print("  set size from %d %d %d %d %d %d" % (x, y, self.xpos, self.ypos, self.width, self.height))
 
         if self.width  < 0: self.width  = 0
         if self.height < 0: self.height = 0
@@ -343,7 +343,7 @@ class Box:
         if px < self.xpos: return False
         if py < self.ypos: return False
 
-        px -= self.xpos
+        px -= self.xpos 
         if px > self.width: return False
 
         py -= self.ypos

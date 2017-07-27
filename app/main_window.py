@@ -87,11 +87,6 @@ class ModeCommon:
             else:
                 self.win.set_mode('plot')
 
-                
-        if key == pg.K_c:
-            self.player.bump_box_color()
-            return
-
         if key == pg.K_UP:
             self.dir_keys[0] = True
             return
@@ -107,7 +102,6 @@ class ModeCommon:
         if key == pg.K_RIGHT:
             self.dir_keys[3] = True
             return
-        pass
 
     def key_up(self, key):
         if key == pg.K_UP:
@@ -125,7 +119,6 @@ class ModeCommon:
         if key == pg.K_RIGHT:
             self.dir_keys[3] = False
             return
-        pass
 
 class PlotMode(ModeCommon):
 
@@ -150,7 +143,6 @@ class PlotMode(ModeCommon):
 
 
     def is_idle(self):
-        #return (self.select_box is None) and (self.plot_box is None)
         return self.plot_box is None
     
     def mouse_move(self, x, y):
@@ -163,7 +155,7 @@ class PlotMode(ModeCommon):
         super().mouse_down(btn)
 
         if btn == 1:
-            box = self.map.box_at_point(self.cursor.step_x, self.cursor.step_y)
+            box = self.map.box_at_point(self.cursor.real_x, self.cursor.real_y)
             if box:
                 self.select_box = box
                 self.map.clear_highlight()
@@ -174,12 +166,11 @@ class PlotMode(ModeCommon):
             self.player.set_pos(
                     self.cursor.step_x,
                     self.cursor.step_y)
-        pass
 
     def key_down(self, key):
         super().key_down(key)
 
-        if key == pg.K_SPACE and self.is_idle():
+        if key == pg.K_SPACE:
             if self.plot_box:
                 if not self.plot_box.parent:
                     self.plot_box.set_size_from(self.cursor.step_x, self.cursor.step_y)
@@ -198,14 +189,14 @@ class PlotMode(ModeCommon):
 
             return
 
-        if key == pg.K_h and self.is_idle(): # holes
+        if key == pg.K_h: # holes
             
             cur_x = self.cursor.step_x
             cur_y = self.cursor.step_y
 
             if self.plot_box:
                 p_box = self.plot_box.parent
-                if p_box and p_box.contains_point(cur_x, cur_x):
+                if p_box and p_box.contains_point(cur_x, cur_y):
                     print("plot hole end")
                     p_box.finish_plot_sub_box(self.plot_box)
                     self.plot_box = None
@@ -224,12 +215,20 @@ class PlotMode(ModeCommon):
 
             return
 
-        if key == pg.K_BACKSPACE and self.is_idle() and self.select_box:
-            self.map.remove_box(self.select_box)
-            self.select_box = None
-            self.app.repaint()
-            self.map.link_boxes()
-            return
+        if key == pg.K_BACKSPACE:
+            
+            if self.plot_box:
+                self.plot_box = None
+                self.app.repaint()
+                return
+
+            if self.select_box:
+                self.map.remove_box(self.select_box)
+                self.select_box = None
+                self.app.repaint()
+                self.map.link_boxes()
+                return
+
 
         if key == pg.K_F2 and self.is_idle():
             self.map.save('map.txt')
@@ -272,8 +271,12 @@ class WalkMode(ModeCommon):
     #def mouse_down(self, x, y):
     #    pass
 
-    #def key_down(self, key):
-    #    pass
+    def key_down(self, key):
+        super().key_down(key)
+
+        if key == pg.K_c:
+            self.player.bump_box_color()
+            return
     
 class MainWindow:
 
@@ -293,9 +296,9 @@ class MainWindow:
                 self.map.player_start_xpos,
                 self.map.player_start_ypos)
 
-        self.walk_mode = WalkMode(self)
-        self.plot_mode = PlotMode(self)
-        self.mode_name = ''
+        self.modes = [
+                WalkMode(self), 
+                PlotMode(self)]
 
         self.set_mode("plot")
 
@@ -303,16 +306,16 @@ class MainWindow:
         #print("Move mouse about. Press SPACE-BAR to start / end plotting of box")
 
     def set_mode(self, name):
-        if name == 'plot':
-            self.mode = self.plot_mode
-            
-        elif name == 'walk':
-            self.mode = self.walk_mode
 
-        else:
-            raise StandardError("Could not find mode %s" % name)
+        for m in self.modes:
+            if name != m.name: continue
 
-        self.mode.activate()
+            self.mode = m
+            self.mode.activate()
+            return
+
+        raise StandardError("Could not find mode %s" % name)
+
 
     def mouse_move(self, xp, yp):
         self.mode.mouse_move(xp, yp) 
